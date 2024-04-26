@@ -185,5 +185,5 @@ fabric.properties
 # Ignore all files in the src/main/resources/sql directory
 src/main/resources/sql/
 
-# secret-key
+# Ignore specific configuration file
 src/main/resources/application-secret.yaml
