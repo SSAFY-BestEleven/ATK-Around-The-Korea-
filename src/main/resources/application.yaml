@@ -2,4 +2,18 @@ spring:
   application:
     name: around-the-korea
   config:
-    import: classpath:application-secrets.yml
+    import: classpath:application-secret.yaml
+  # JSP Path (ViewResolver)
+  mvc:
+    view:
+      prefix: /WEB-INF/views/ 
+      suffix: .jsp
+  # datasource
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/test?serverTimezone=UTC&useUniCode=yes&characterEncoding=UTF-8
+
+server:
+  port: 8080
+  servlet:
+    context-path: /ATK
