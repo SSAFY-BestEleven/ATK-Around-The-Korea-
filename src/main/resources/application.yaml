@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: around-the-korea
+  config:
+    import: classpath:application-secrets.yml
