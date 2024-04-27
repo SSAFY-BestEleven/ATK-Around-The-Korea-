@@ -1,14 +1,30 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /ATK
+    
 spring:
   application:
     name: 가보자9
+    
+  config:
+    import: classpath:application-secret.yaml
+    
+  mvc:
+    view:
+      prefix: /WEB-INF/views/ 
+      suffix: .jsp    
+      
   h2:
     console:
       enabled: true
       path: /h2-console
+      
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     username: sa
     password:
+    
   jpa:
     show-sql: true
     defer-datasource-initialization: true
