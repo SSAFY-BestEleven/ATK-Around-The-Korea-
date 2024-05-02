@@ -1,6 +1,5 @@
 package com.ssafy.aroundthekorea.map.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -13,14 +12,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ssafy.aroundthekorea.map.domain.AttractionInfo;
 import com.ssafy.aroundthekorea.map.service.MapService;
-import com.ssafy.aroundthekorea.user.service.UserService;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/v1/map")
+@RequiredArgsConstructor
 public class MapController {
 	private final MapService mapService;
 

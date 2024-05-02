@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.ssafy.aroundthekorea.map.domain.AttractionInfo;
 import com.ssafy.aroundthekorea.map.repository.AttractionInfoRepository;
 
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,7 +17,12 @@ public class MapServcieImpl implements MapService {
 
 	@Override
 	public List<AttractionInfo> getKeywordAttraction(String keyword) {
-		return attractionInfoRepository.findAllByKeyword(keyword);
+		try {
+			return attractionInfoRepository.findAllByKeyword(keyword);
+		} catch (Exception e) {
+			throw new EntityNotFoundException("해당하는 키워드가 없습니다.");
+		}
 	}
+
 
 }
