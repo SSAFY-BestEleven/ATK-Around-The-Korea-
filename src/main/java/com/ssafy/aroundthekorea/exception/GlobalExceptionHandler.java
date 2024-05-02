@@ -8,6 +8,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import jakarta.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 	private final Logger log = LoggerFactory.getLogger(this.getClass());
@@ -18,8 +20,14 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.internalServerError().body("관리자에게 문의해주세요.");
 	}
 
-	@ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
+	@ExceptionHandler({ BindException.class, MethodArgumentNotValidException.class })
 	public ResponseEntity<?> handle(BindException e) {
+		log.info("[입력 예외] -> {}", e.getMessage());
+		return ResponseEntity.badRequest().body("입력 오류가 발생했습니다.");
+	}
+
+	@ExceptionHandler(EntityNotFoundException.class)
+	public ResponseEntity<?> handle(EntityNotFoundException e) {
 		log.info("[입력 예외] -> {}", e.getMessage());
 		return ResponseEntity.badRequest().body("입력 오류가 발생했습니다.");
 	}
