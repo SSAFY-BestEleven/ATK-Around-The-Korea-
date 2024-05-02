@@ -1,4 +1,4 @@
-package com.ssafy.aroundthekorea.dto;
+package com.ssafy.aroundthekorea.map.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,7 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AttractionDetail {
+public class AttractionDescription {
 	private Integer contentId;
-	private String cat1, cat2, cat3, createdTime, modifiedTime, bookTour;
+	private String homepage;
+	private String overview;
+	private String telname;
 }

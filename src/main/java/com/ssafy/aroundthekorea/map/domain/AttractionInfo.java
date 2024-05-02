@@ -1,4 +1,4 @@
-package com.ssafy.aroundthekorea.dto;
+package com.ssafy.aroundthekorea.map.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AttractionInfo {
-	private Integer contentId;
-	private Integer contentTypeId;
+	private Long contentId;
+	private Long contentTypeId;
 	private String title;
 	private String addr1;
 	private String addr2;
@@ -17,9 +17,9 @@ public class AttractionInfo {
 	private String tel;
 	private String firstImage;
 	private String firstImage2;
-	private Integer readCount;
-	private Integer sidoCode;
-	private Integer gugunCode;
+	private Long readCount;
+	private Long sidoCode;
+	private Long gugunCode;
 	private Double latitude;
 	private Double longitude;
 	private String mlevel;
