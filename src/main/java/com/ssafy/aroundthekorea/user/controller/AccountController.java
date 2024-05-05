@@ -11,10 +11,10 @@ import com.ssafy.aroundthekorea.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/accounts")
 @RequiredArgsConstructor
 @RestController
-public class UserController {
+public class AccountController {
 	private final UserService userService;
 
 	@PostMapping

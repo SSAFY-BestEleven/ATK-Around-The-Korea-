@@ -7,8 +7,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "users")
 @Entity
@@ -27,4 +29,5 @@ public class User {
 		this.passowrd = passowrd;
 		this.email = email;
 	}
+
 }

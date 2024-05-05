@@ -9,24 +9,37 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EmptySource;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ssafy.aroundthekorea.config.SecurityConfig;
+import com.ssafy.aroundthekorea.security.custom.OpenPolicyAgentAuthorizationManager;
+import com.ssafy.aroundthekorea.security.jwt.Jwt;
+import com.ssafy.aroundthekorea.security.jwt.JwtTokenConfig;
+import com.ssafy.aroundthekorea.security.token.TokenService;
 import com.ssafy.aroundthekorea.user.controller.request.SignUpUserRequestDto;
+import com.ssafy.aroundthekorea.user.domain.repository.UserRepository;
 import com.ssafy.aroundthekorea.user.service.UserService;
 
-@WebMvcTest(UserController.class)
-class UserControllerTest {
-	final String PREFIX_URI = "/api/v1/users";
+@Import({SecurityConfig.class, H2ConsoleAutoConfiguration.class})
+@WebMvcTest(AccountController.class)
+class AccountControllerTest {
+	final String PREFIX_URI = "/api/v1/accounts";
+
 	@Autowired
 	MockMvc mockMvc;
 
@@ -35,6 +48,21 @@ class UserControllerTest {
 
 	@MockBean
 	UserService userService;
+
+	@MockBean
+	JwtTokenConfig jwtTokenConfig;
+
+	@MockBean
+	TokenService tokenService;
+
+	@MockBean
+	UserRepository userRepository;
+
+	@MockBean
+	Jwt jwt;
+
+	@MockBean
+	OpenPolicyAgentAuthorizationManager openPolicyAgentAuthorizationManager;
 
 	@DisplayName("회원가입에 성공한다.")
 	@Test

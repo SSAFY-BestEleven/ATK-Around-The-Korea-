@@ -29,8 +29,9 @@ public class UserIntegrationTest {
 		var request = new SignUpUserRequestDto("docker123",
 			"{encryption} dn1!323nj@",
 			"docweqe123@gmail.com");
+
 		given().port(port).body(request).contentType(JSON).log().all().
-			when().post("/api/v1/users")
+			when().post("/api/v1/accounts")
 			.then().log().all()
 			.statusCode(HttpStatus.SC_OK);
 	}

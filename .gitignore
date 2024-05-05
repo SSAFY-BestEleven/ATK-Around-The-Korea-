@@ -188,3 +188,4 @@ src/main/resources/sql/
 # Ignore specific configuration file
 src/main/resources/application-secret.yaml
 .env
+./gradle
