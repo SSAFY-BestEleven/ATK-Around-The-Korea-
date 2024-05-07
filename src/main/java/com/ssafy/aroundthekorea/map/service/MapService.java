@@ -9,6 +9,6 @@ import com.ssafy.aroundthekorea.map.domain.AttractionInfo;
 @Service
 public interface MapService {
 
-	List<AttractionInfo> getKeywordAttraction(String keyword);
+	List<AttractionInfo> getKeywordAttraction(String keyword, Long sido, Long gugun,Long contentTypeId);
 
 }
