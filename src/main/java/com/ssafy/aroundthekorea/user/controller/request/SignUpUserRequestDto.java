@@ -1,5 +1,7 @@
 package com.ssafy.aroundthekorea.user.controller.request;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

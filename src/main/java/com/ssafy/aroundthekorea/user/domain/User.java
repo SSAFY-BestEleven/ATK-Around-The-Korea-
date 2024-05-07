@@ -1,5 +1,7 @@
 package com.ssafy.aroundthekorea.user.domain;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,15 +21,18 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String username;
-	private String passowrd;
+	private String password;
 	private String email;
 
 	@Builder
-	public User(Long id, String username, String passowrd, String email) {
+	public User(Long id, String username, String password, String email) {
 		this.id = id;
 		this.username = username;
-		this.passowrd = passowrd;
+		this.password = password;
 		this.email = email;
 	}
 
+	public void encrypt(PasswordEncoder passwordEncoder) {
+		this.password = passwordEncoder.encode(this.password);
+	}
 }

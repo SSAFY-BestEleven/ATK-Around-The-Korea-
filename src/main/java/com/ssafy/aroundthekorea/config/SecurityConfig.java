@@ -13,27 +13,27 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 import com.ssafy.aroundthekorea.security.custom.OpenPolicyAgentAuthorizationManager;
-import com.ssafy.aroundthekorea.security.jwt.Jwt;
-import com.ssafy.aroundthekorea.security.jwt.JwtTokenConfig;
+import com.ssafy.aroundthekorea.security.jwt.JwtHandler;
+import com.ssafy.aroundthekorea.security.jwt.JwtTokenProperties;
 
-@EnableConfigurationProperties({JwtTokenConfig.class})
+@EnableConfigurationProperties({JwtTokenProperties.class})
 @Configuration
 public class SecurityConfig {
-	private final JwtTokenConfig jwtTokenConfig;
+	private final JwtTokenProperties jwtTokenProperties;
 	private final OpenPolicyAgentAuthorizationManager openPolicyAgentAuthorizationManager;
 
-	public SecurityConfig(JwtTokenConfig jwtTokenConfig,
+	public SecurityConfig(JwtTokenProperties jwtTokenProperties,
 		OpenPolicyAgentAuthorizationManager openPolicyAgentAuthorizationManager) {
-		this.jwtTokenConfig = jwtTokenConfig;
+		this.jwtTokenProperties = jwtTokenProperties;
 		this.openPolicyAgentAuthorizationManager = openPolicyAgentAuthorizationManager;
 	}
 
 	@Bean
-	public Jwt jwt() {
-		return new Jwt(jwtTokenConfig.issuer(),
-			jwtTokenConfig.clientSecret(),
-			jwtTokenConfig.accessExpirySeconds(),
-			jwtTokenConfig.refreshExpirySeconds()
+	public JwtHandler jwt() {
+		return new JwtHandler(jwtTokenProperties.issuer(),
+			jwtTokenProperties.clientSecret(),
+			jwtTokenProperties.accessExpirySeconds(),
+			jwtTokenProperties.refreshExpirySeconds()
 		);
 	}
 
