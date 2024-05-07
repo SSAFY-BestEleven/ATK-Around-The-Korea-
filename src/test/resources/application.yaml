@@ -32,12 +32,12 @@ jwt:
     issuer: ${JWT_ISSUER:ENC(2a4b4nIfQ71azDnMx//jIOG2nZT+xbGIYzNUwI807aM=)}
     client-secret: ${JWT_SECRET:ENC(OoBtxYPhAJ0MlixnVsTUD1rMxvsU+csy)}
     access-expiry-seconds: 1
-    refresh-expiry-seconds: 5
+    refresh-expiry-seconds: 3
 
 encryptor:
   key: ${ENCRYPTOR_KEY:ENV(YjMC1MxZrt/OAUySn0Nc1dUgvaKMW87tT5+vqncccaQ=)}
 
 kakaomap:
-  key: ${KAKAO_MAP_KEY:ENC(dasjd18723bfhjasdf78129123)}
+  key: ${KAKAO_MAP_KEY:ENC(DASJD18723BFHJASDF78129123)}
 tmap:
-  key: ${T_MAP_KEY:ENC(dasjd18723bfhjasdf78129123)}
+  key: ${T_MAP_KEY:ENC(DASJD18723BFHJASDF78129123)}

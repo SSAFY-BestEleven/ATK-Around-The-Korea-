@@ -1,5 +1,8 @@
 package com.ssafy.aroundthekorea.user.controller;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -11,28 +14,29 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Spy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.h2.H2ConsoleAutoConfiguration;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.aroundthekorea.config.SecurityConfig;
 import com.ssafy.aroundthekorea.security.custom.OpenPolicyAgentAuthorizationManager;
-import com.ssafy.aroundthekorea.security.jwt.Jwt;
-import com.ssafy.aroundthekorea.security.jwt.JwtTokenConfig;
-import com.ssafy.aroundthekorea.security.token.TokenService;
+import com.ssafy.aroundthekorea.security.jwt.JwtHandler;
+import com.ssafy.aroundthekorea.security.jwt.JwtTokenProperties;
+import com.ssafy.aroundthekorea.security.jwt.dto.JwtAuthenticationDto;
+import com.ssafy.aroundthekorea.security.jwt.dto.JwtAuthenticationToken;
+import com.ssafy.aroundthekorea.security.token.service.TokenService;
+import com.ssafy.aroundthekorea.user.controller.request.LoginRequestDto;
 import com.ssafy.aroundthekorea.user.controller.request.SignUpUserRequestDto;
+import com.ssafy.aroundthekorea.user.controller.response.LoginResponseDto;
+import com.ssafy.aroundthekorea.user.controller.response.TokenDto;
 import com.ssafy.aroundthekorea.user.domain.repository.UserRepository;
+import com.ssafy.aroundthekorea.user.service.account.AccountService;
 import com.ssafy.aroundthekorea.user.service.UserService;
 
 @Import({SecurityConfig.class, H2ConsoleAutoConfiguration.class})
@@ -50,7 +54,7 @@ class AccountControllerTest {
 	UserService userService;
 
 	@MockBean
-	JwtTokenConfig jwtTokenConfig;
+	JwtTokenProperties jwtTokenProperties;
 
 	@MockBean
 	TokenService tokenService;
@@ -59,10 +63,13 @@ class AccountControllerTest {
 	UserRepository userRepository;
 
 	@MockBean
-	Jwt jwt;
+	JwtHandler jwtHandler;
 
 	@MockBean
 	OpenPolicyAgentAuthorizationManager openPolicyAgentAuthorizationManager;
+
+	@MockBean
+	AccountService accountService;
 
 	@DisplayName("회원가입에 성공한다.")
 	@Test
@@ -94,7 +101,7 @@ class AccountControllerTest {
 			action.andExpect(status().isBadRequest());
 		}
 
-		@DisplayName("username 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
+		@DisplayName("password 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
 		@ParameterizedTest(name = "{index}: invalid password -> [{0}]")
 		@NullAndEmptySource
 		void failInvalidPassword(String invalidPassword) throws Exception {
@@ -109,8 +116,8 @@ class AccountControllerTest {
 			action.andExpect(status().isBadRequest());
 		}
 
-		@DisplayName("username 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
-		@ParameterizedTest(name = "{index}: invalid password -> [{0}]")
+		@DisplayName("email 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
+		@ParameterizedTest(name = "{index}: invalid email -> [{0}]")
 		@NullAndEmptySource
 		@ValueSource(strings = {"e.com", "sdmkalsd@@google", "!#!#!###!#.!##!#", "_____", "@gmail.com"})
 		void failInvalidEmail(String invalidEmail) throws Exception {
@@ -127,6 +134,69 @@ class AccountControllerTest {
 
 		private ResultActions getPerform(String body) throws Exception {
 			return mockMvc.perform(post(PREFIX_URI).contentType(APPLICATION_JSON).content(body));
+		}
+	}
+
+	@DisplayName("로그인이 완료되면 토큰 두개를 반환한다.")
+	@Test
+	void testLogin() throws Exception {
+		//given
+		var requestDto = new LoginRequestDto("docker123", "{encryption} dn1!323nj@");
+		var authenticationToken = new JwtAuthenticationToken(requestDto.username(), requestDto.password());
+		authenticationToken.setDetails(new JwtAuthenticationDto(1L, requestDto.username()));
+		LoginResponseDto expectedResponse = new LoginResponseDto(
+			new TokenDto("access-token", "{header}.{payload}.{signature}"),
+			new TokenDto("refresh-token", "{header}.{payload}.{signature}")
+		);
+		given(accountService.authenticate(any())).willReturn(authenticationToken);
+		given(accountService.createTokens(any())).willReturn(expectedResponse);
+		String body = objectMapper.writeValueAsString(requestDto);
+		//when
+		var perform = mockMvc.perform(post(PREFIX_URI + "/login").contentType(APPLICATION_JSON).content(body));
+		//then
+		String responseBody = perform.andExpect(status().isOk())
+			.andReturn()
+			.getResponse().getContentAsString();
+		LoginResponseDto responseDto = objectMapper.readValue(responseBody, new TypeReference<>() {
+		});
+
+		assertThat(responseDto.access().headerName()).isEqualTo(expectedResponse.access().headerName());
+		assertThat(responseDto.access().token()).isEqualTo(expectedResponse.access().token());
+		assertThat(responseDto.refresh().headerName()).isEqualTo(expectedResponse.refresh().headerName());
+		assertThat(responseDto.refresh().token()).isEqualTo(expectedResponse.refresh().token());
+	}
+
+	@DisplayName("[Validation] 로그인 시")
+	@Nested
+	class LoginValidationTest {
+		@DisplayName("username 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
+		@ParameterizedTest(name = "{index}: invalid username -> [{0}]")
+		@NullAndEmptySource
+		void failInvalidUsername(String invalidUsername) throws Exception {
+			//given
+			var requestDto = new LoginRequestDto(invalidUsername, "{encryption} dn1!323nj@");
+			String body = objectMapper.writeValueAsString(requestDto);
+			//when
+			ResultActions action = getPerform(body);
+			//then
+			action.andExpect(status().isBadRequest());
+		}
+
+		@DisplayName("password 에 공백이 포함되거나 null값이 들어오면 예외가 발생한다.")
+		@ParameterizedTest(name = "{index}: invalid password -> [{0}]")
+		@NullAndEmptySource
+		void failInvalidPassword(String invalidPassword) throws Exception {
+			//given
+			var requestDto = new LoginRequestDto("docker123", invalidPassword);
+			String body = objectMapper.writeValueAsString(requestDto);
+			//when
+			ResultActions action = getPerform(body);
+			//then
+			action.andExpect(status().isBadRequest());
+		}
+
+		private ResultActions getPerform(String body) throws Exception {
+			return mockMvc.perform(post(PREFIX_URI + "/login").contentType(APPLICATION_JSON).content(body));
 		}
 	}
 }

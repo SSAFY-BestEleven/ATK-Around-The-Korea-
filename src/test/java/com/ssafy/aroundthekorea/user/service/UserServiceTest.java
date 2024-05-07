@@ -11,10 +11,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.ssafy.aroundthekorea.user.controller.request.SignUpUserRequestDto;
 import com.ssafy.aroundthekorea.user.domain.repository.UserRepository;
+import com.ssafy.aroundthekorea.user.service.mapper.UserMapper;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -24,8 +27,11 @@ class UserServiceTest {
 	@Mock
 	UserRepository userRepository;
 
-	@Mock
+	@Spy
 	UserMapper userMapper;
+
+	@Mock
+	PasswordEncoder passwordEncoder;
 
 	@DisplayName("회원정보가 저장된다.")
 	@Test
