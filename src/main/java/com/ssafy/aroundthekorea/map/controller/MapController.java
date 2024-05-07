@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,9 +35,15 @@ public class MapController {
 		return ResponseEntity.status(HttpStatus.OK).body(kakaomapKey);
 	}
 
-	@GetMapping("/keyword")
 	// 키워드 검색
-	public List<AttractionInfo> getKeywordAttraction(@RequestParam("keyword") String keyword) {
-		return mapService.getKeywordAttraction(keyword);
+	@GetMapping("/keyword")
+	public List<AttractionInfo> getKeywordAttraction(@RequestParam("keyword") String keyword,
+			@RequestParam("sido") Long sido, @RequestParam("gugun") Long gugun,
+			@RequestParam("contentTypeId") Long contentTypeId) {
+		return mapService.getKeywordAttraction(keyword, sido, gugun, contentTypeId);
 	}
+
+	// 상세보기 검색
+	// https://map.kakao.com/link/from/18577297/to/18577297 from에서 to로 길찾기 지원 가능
+
 }
