@@ -1,15 +1,12 @@
 spring:
   application:
     name: 가보자9
-    
+
+  profiles:
+    active: local
+
   config:
     import: classpath:application-secret.yaml
-    
-  mvc:
-    view:
-      prefix: /WEB-INF/views/ 
-      suffix: .jsp    
-      
   h2:
     console:
       enabled: true
@@ -20,13 +17,13 @@ spring:
     username: sa
     password:
     
+
   jpa:
     show-sql: true
     defer-datasource-initialization: true
     hibernate:
       ddl-auto: create
     database: h2
-
 logging:
   level:
     sql: info

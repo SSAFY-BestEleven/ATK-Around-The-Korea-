@@ -1,4 +1,4 @@
-package com.ssafy.aroundthekorea.user.service;
+package com.ssafy.aroundthekorea.user.service.mapper;
 
 import org.springframework.stereotype.Component;
 
@@ -10,8 +10,7 @@ public class UserMapper {
 	public User toUser(SignUpUserRequestDto requestDto) {
 		return User.builder()
 			.username(requestDto.username())
-			// todo: encryption
-			.passowrd(requestDto.password())
+			.password(requestDto.password())
 			.email(requestDto.email())
 			.build();
 	}
