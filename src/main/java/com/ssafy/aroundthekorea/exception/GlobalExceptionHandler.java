@@ -3,11 +3,15 @@ package com.ssafy.aroundthekorea.exception;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.ssafy.aroundthekorea.exception.model.BusinessException;
 import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
@@ -26,6 +30,28 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body("입력 오류가 발생했습니다.");
 	}
 
+	@ExceptionHandler({JWTVerificationException.class})
+	public ResponseEntity<?> handle(JWTVerificationException e) {
+		log.info(e.getMessage());
+		return ResponseEntity.internalServerError().body("인증 오류가 발생하였습니다.");
+	}
+
+	@ExceptionHandler(JWTCreationException.class)
+	public ResponseEntity<?> handle(JWTCreationException e) {
+		log.info(e.getMessage());
+		return ResponseEntity.internalServerError().body("관리자에게 문의해주세요.");
+	}
+
+	@ExceptionHandler(AuthenticationException.class)
+	public ResponseEntity<?> handle(AuthenticationException e) {
+		log.info(e.getMessage());
+		return ResponseEntity.internalServerError().body("로그인이 필요합니다.");
+	}
+
+	@ExceptionHandler(BusinessException.class)
+	public ResponseEntity<?> handle(BusinessException e) {
+		log.info(e.getMessage());
+		return ResponseEntity.internalServerError().body(e.getClientMessage());
 	@ExceptionHandler(EntityNotFoundException.class)
 	public ResponseEntity<?> handle(EntityNotFoundException e) {
 		log.info("[입력 예외] -> {}", e.getMessage());
