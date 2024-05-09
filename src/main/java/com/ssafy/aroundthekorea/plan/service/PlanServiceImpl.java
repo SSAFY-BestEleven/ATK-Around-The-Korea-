@@ -11,9 +11,9 @@ import com.ssafy.aroundthekorea.plan.repository.TravelPlanRepository;
 
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
 @Service
 @Transactional
+@RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
 	private final TravelPlanRepository travelPlanRepository;
 
@@ -26,12 +26,13 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public void modifyOrder(List<TravelPlanOrderRequest> orderList,Integer planId) {
-		for(int i=0;i<orderList.size();i++)
-		{
-			// orderlist에서 꺼내서 service단에서 repository로 넘겨줄 파라미터를 세팅해야함.
+	public void modifyOrder(List<TravelPlanOrderRequest> orderList, Integer planId) {
+		for (int i = 0; i < orderList.size(); i++) {
 			TravelPlanOrderRequest travelPlanOrderReqeust = orderList.get(i);
-//			travelPlanRepository.modifyOrderByAttractionInfoId(travelPlanOrderReqeust,planId);
+			TravelPlan travelPlan = travelPlanRepository
+					.findByAttractionInfoId(travelPlanOrderReqeust.getAttractionInfoId());
+			travelPlan.setOrderIndex(travelPlanOrderReqeust.getOrderIndex());
+			travelPlanRepository.save(travelPlan);
 		}
 	}
 

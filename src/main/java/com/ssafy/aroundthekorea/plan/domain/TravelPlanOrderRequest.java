@@ -1,11 +1,13 @@
 package com.ssafy.aroundthekorea.plan.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class TravelPlanOrderRequest {
-	private int travelId;
-	private int order;
+	private Integer attractionInfoId;
+	private Integer orderIndex;
 }
