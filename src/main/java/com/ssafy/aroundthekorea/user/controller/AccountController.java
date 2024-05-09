@@ -4,7 +4,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,7 +34,7 @@ public class AccountController {
 		userService.create(requestDto);
 	}
 
-	@PostMapping(path = "/login")
+	@PostMapping("/login")
 	public ResponseEntity<?> login(@Validated @RequestBody LoginRequestDto authRequest) {
 		var jwtAuthenticationToken = new JwtAuthenticationToken(authRequest.username(), authRequest.password());
 		Authentication authenticatedAuth = accountService.authenticate(jwtAuthenticationToken);
@@ -40,6 +42,11 @@ public class AccountController {
 		LoginResponseDto responseDto = accountService.createTokens(details);
 
 		return new ResponseEntity<>(responseDto, new HttpHeaders(), HttpStatus.OK);
+	}
+
+	@DeleteMapping("/logout")
+	public void after(@AuthenticationPrincipal JwtAuthenticationDto auth) {
+		accountService.removeToken(auth.userId());
 	}
 
 }

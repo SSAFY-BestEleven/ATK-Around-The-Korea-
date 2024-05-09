@@ -2,9 +2,11 @@ package com.ssafy.aroundthekorea.user.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.BDDMockito.*;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.verify;
+import static org.mockito.Mockito.times;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -25,9 +27,12 @@ import org.springframework.test.web.servlet.ResultActions;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.aroundthekorea.config.SecurityConfig;
+import com.ssafy.aroundthekorea.config.WebConfig;
 import com.ssafy.aroundthekorea.security.custom.OpenPolicyAgentAuthorizationManager;
+import com.ssafy.aroundthekorea.security.interceptor.AuthInterceptor;
 import com.ssafy.aroundthekorea.security.jwt.JwtHandler;
 import com.ssafy.aroundthekorea.security.jwt.JwtTokenProperties;
+import com.ssafy.aroundthekorea.security.jwt.config.WithJwtMockUser;
 import com.ssafy.aroundthekorea.security.jwt.dto.JwtAuthenticationDto;
 import com.ssafy.aroundthekorea.security.jwt.dto.JwtAuthenticationToken;
 import com.ssafy.aroundthekorea.security.token.service.TokenService;
@@ -36,11 +41,11 @@ import com.ssafy.aroundthekorea.user.controller.request.SignUpUserRequestDto;
 import com.ssafy.aroundthekorea.user.controller.response.LoginResponseDto;
 import com.ssafy.aroundthekorea.user.controller.response.TokenDto;
 import com.ssafy.aroundthekorea.user.domain.repository.UserRepository;
-import com.ssafy.aroundthekorea.user.service.account.AccountService;
 import com.ssafy.aroundthekorea.user.service.UserService;
+import com.ssafy.aroundthekorea.user.service.account.AccountService;
 
 @Import({SecurityConfig.class, H2ConsoleAutoConfiguration.class})
-@WebMvcTest(AccountController.class)
+@WebMvcTest(value = AccountController.class, excludeAutoConfiguration = {WebConfig.class})
 class AccountControllerTest {
 	final String PREFIX_URI = "/api/v1/accounts";
 
@@ -64,6 +69,9 @@ class AccountControllerTest {
 
 	@MockBean
 	JwtHandler jwtHandler;
+
+	@MockBean
+	AuthInterceptor authInterceptor;
 
 	@MockBean
 	OpenPolicyAgentAuthorizationManager openPolicyAgentAuthorizationManager;
@@ -198,5 +206,19 @@ class AccountControllerTest {
 		private ResultActions getPerform(String body) throws Exception {
 			return mockMvc.perform(post(PREFIX_URI + "/login").contentType(APPLICATION_JSON).content(body));
 		}
+	}
+
+	@WithJwtMockUser
+	@DisplayName("로그인한 사용자 많이 로그아웃한다")
+	@Test
+	void testLogout() throws Exception {
+		//given
+		given(authInterceptor.preHandle(any(),any(),any())).willReturn(true);
+		//when
+		mockMvc.perform(delete(PREFIX_URI + "/logout")
+				.header("acc","{token}"))
+			.andExpect(status().isOk());
+		//then
+		verify(accountService, times(1)).removeToken(any());
 	}
 }
