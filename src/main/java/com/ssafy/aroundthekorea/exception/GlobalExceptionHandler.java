@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.auth0.jwt.exceptions.JWTCreationException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.ssafy.aroundthekorea.exception.model.BusinessException;
+import jakarta.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -25,7 +26,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.internalServerError().body("관리자에게 문의해주세요.");
 	}
 
-	@ExceptionHandler({BindException.class, MethodArgumentNotValidException.class})
+	@ExceptionHandler({ BindException.class, MethodArgumentNotValidException.class })
 	public ResponseEntity<?> handle(BindException e) {
 		log.info("[입력 예외] -> {}", e.getMessage());
 		return ResponseEntity.badRequest()

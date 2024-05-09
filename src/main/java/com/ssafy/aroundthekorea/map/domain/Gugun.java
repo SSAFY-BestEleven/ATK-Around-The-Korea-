@@ -1,4 +1,4 @@
-package com.ssafy.aroundthekorea.dto;
+package com.ssafy.aroundthekorea.map.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
