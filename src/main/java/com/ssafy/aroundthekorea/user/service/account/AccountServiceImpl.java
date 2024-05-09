@@ -89,4 +89,10 @@ public class AccountServiceImpl implements AccountService {
 		);
 	}
 
+	@Transactional
+	@Override
+	public void removeToken(Long userId) {
+		jwtTokenRepository.deleteByUserId(userId);
+	}
+
 }

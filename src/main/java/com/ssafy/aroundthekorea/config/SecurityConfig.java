@@ -51,7 +51,8 @@ public class SecurityConfig {
 			.oidcLogout(AbstractHttpConfigurer::disable)
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(
-				authRequest -> authRequest.requestMatchers(HttpMethod.POST, "/api/v1/accounts/**").permitAll()
+				authRequest -> authRequest.requestMatchers(HttpMethod.POST, "/api/v1/accounts").permitAll()
+					.requestMatchers(HttpMethod.POST, "/api/v1/accounts/login").permitAll()
 					.anyRequest().access(openPolicyAgentAuthorizationManager))
 			.build();
 	}

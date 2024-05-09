@@ -45,8 +45,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
-		HttpServletResponse response,
-		Object handler) throws Exception {
+		HttpServletResponse response, Object handler) {
 		String accessToken = request.getHeader(jwtConfig.accessHeader());
 		String refreshToken = request.getHeader(jwtConfig.refreshHeader());
 
@@ -92,7 +91,8 @@ public class AuthInterceptor implements HandlerInterceptor {
 				.orElseThrow(() -> new NotFoundResource(
 					format("존재하지 않는 리소스입니다. [userid -> {0}]", jwtRefreshToken.userId()))
 				);
-			JwtHandler.Claims accessClaim = JwtHandler.Claims.of(user.getId(), user.getUsername(), new String[] {"ROLE_USER"});
+			JwtHandler.Claims accessClaim = JwtHandler.Claims.of(user.getId(), user.getUsername(),
+				new String[] {"ROLE_USER"});
 			String newAccessToken = jwtHandler.createForAccess(accessClaim);
 			addHeader(response, newAccessToken, refreshToken);
 		} catch (TokenExpiredException | NotFoundResource e) {

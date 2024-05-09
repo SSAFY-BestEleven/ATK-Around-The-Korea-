@@ -14,4 +14,7 @@ public interface JwtTokenRepository extends JpaRepository<JwtToken, Long> {
 	@Modifying
 	@Query("delete from JwtToken token where token.createdAt < :threshHold")
 	void deleteExpiredToken(@Param("threshHold") LocalDateTime threshHold);
+
+	void deleteByUserId(Long userId);
+
 }
