@@ -27,8 +27,8 @@ logging:
 
 jwt:
   token:
-    access-header: ${JWT_ACCESS_HEADER:ENC(wCDnLXsQpxmETxULplUl/FQK040NhP50)}
-    refresh-header: ${JWT_REFRESH_HEADER:ENC(7w2hCckNkFDU0fhPsHYPVPRgQIP5F8D2xCSZ1WSqOl0=)}
+    access-header: ${JWT_ACCESS_HEADER:access}
+    refresh-header: ${JWT_REFRESH_HEADER:refresh}
     issuer: ${JWT_ISSUER:ENC(2a4b4nIfQ71azDnMx//jIOG2nZT+xbGIYzNUwI807aM=)}
     client-secret: ${JWT_SECRET:ENC(OoBtxYPhAJ0MlixnVsTUD1rMxvsU+csy)}
     access-expiry-seconds: 1
