@@ -30,7 +30,7 @@ public class GlobalExceptionHandler {
 		return ResponseEntity.badRequest().body("입력 오류가 발생했습니다.");
 	}
 
-	@ExceptionHandler({JWTVerificationException.class})
+	@ExceptionHandler({ JWTVerificationException.class })
 	public ResponseEntity<?> handle(JWTVerificationException e) {
 		log.info(e.getMessage());
 		return ResponseEntity.internalServerError().body("인증 오류가 발생하였습니다.");
@@ -52,9 +52,5 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handle(BusinessException e) {
 		log.info(e.getMessage());
 		return ResponseEntity.internalServerError().body(e.getClientMessage());
-	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<?> handle(EntityNotFoundException e) {
-		log.info("[입력 예외] -> {}", e.getMessage());
-		return ResponseEntity.badRequest().body("입력 오류가 발생했습니다.");
 	}
 }

@@ -51,7 +51,7 @@ public class SecurityConfig {
 			.oidcLogout(AbstractHttpConfigurer::disable)
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests(
-				authRequest -> authRequest.requestMatchers(HttpMethod.POST, "/api/v1/accounts/**").permitAll()
+				authRequest -> authRequest.requestMatchers(HttpMethod.POST, "/api/**").permitAll()
 					.anyRequest().access(openPolicyAgentAuthorizationManager))
 			.build();
 	}
@@ -59,6 +59,8 @@ public class SecurityConfig {
 	@Bean
 	public WebSecurityCustomizer webSecurityCustomizer() {
 		return web -> web.ignoring().requestMatchers(PathRequest.toH2Console())
-			.requestMatchers(PathRequest.toStaticResources().atCommonLocations());
+			.requestMatchers(PathRequest.toStaticResources().atCommonLocations())
+			.requestMatchers("/swagger-ui/**");
+			 
 	}
 }
