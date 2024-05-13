@@ -30,9 +30,9 @@ public class MapController {
 	// 키워드 검색
 	@GetMapping("/keyword")
 	public List<AttractionInfo> getKeywordAttraction(@RequestParam("keyword") String keyword,
-			@RequestParam("sido") Long sido, @RequestParam("gugun") Long gugun,
+			@RequestParam("sido") Long sido,
 			@RequestParam("contentTypeId") Long contentTypeId) {
-		return mapService.getKeywordAttraction(keyword, sido, gugun, contentTypeId);
+		return mapService.getKeywordAttraction(keyword, sido, contentTypeId);
 	}
 
 	// 상세보기 검색

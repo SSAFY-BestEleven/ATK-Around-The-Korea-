@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.ssafy.aroundthekorea.exception.model.NotFoundResource;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlan;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlanOrderRequest;
 import com.ssafy.aroundthekorea.plan.repository.TravelPlanRepository;
@@ -34,6 +35,15 @@ public class PlanServiceImpl implements PlanService {
 			travelPlan.setOrderIndex(travelPlanOrderReqeust.getOrderIndex());
 			travelPlanRepository.save(travelPlan);
 		}
+	}
+
+	@Override
+	public List<TravelPlan> getTravelPlansByPlanId(Integer planId) {
+		 List<TravelPlan> travelPlans = travelPlanRepository.findAllByPlanId(planId);
+		    if (travelPlans.isEmpty()) {
+		        throw new NotFoundResource(planId + "에 해당하는 planId가 없습니다.");
+		    }
+		    return travelPlans;
 	}
 
 }
