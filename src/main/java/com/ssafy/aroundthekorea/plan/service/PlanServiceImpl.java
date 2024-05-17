@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.ssafy.aroundthekorea.exception.model.NotFoundResource;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlan;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlanOrderRequest;
+import com.ssafy.aroundthekorea.plan.repository.PlanRepository;
 import com.ssafy.aroundthekorea.plan.repository.TravelPlanRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -17,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
 	private final TravelPlanRepository travelPlanRepository;
-
+	private final PlanRepository planRepository;
 	@Override
 	public void addContentToPlan(Integer contentId, Integer planId) {
 		List<TravelPlan> travelPlanList = travelPlanRepository.findAllByPlanId(planId);
@@ -45,5 +46,16 @@ public class PlanServiceImpl implements PlanService {
 		    }
 		    return travelPlans;
 	}
+
+	@Override
+	public void deleteByTravelPlanId( Integer travelPlanId) {
+		travelPlanRepository.deleteById(travelPlanId);
+	}
+
+	@Override
+	public void deleteByPlanId(Integer planId) {
+		planRepository.deleteById(planId);
+	}
+
 
 }
