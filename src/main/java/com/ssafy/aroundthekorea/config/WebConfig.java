@@ -2,6 +2,7 @@ package com.ssafy.aroundthekorea.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -24,6 +25,16 @@ public class WebConfig implements WebMvcConfigurer {
 
 	public HandlerInterceptor proxyInterceptor() {
 		return new PathMatcherInterceptor(authInterceptor)
-			.excludePathPattern("/api/v1/accounts/**", PathMethod.POST);
+			.excludePathPattern("/api/v1/accounts/**", PathMethod.POST)
+			.excludePathPattern("/api/v1/accounts/**", PathMethod.GET)
+			.excludePathPattern("/h2-console/**", PathMethod.ANY);
+	}
+
+	@Override
+	public void addCorsMappings(CorsRegistry registry) {
+		registry.addMapping("/api/**")
+			.allowCredentials(false)
+			.allowedOrigins("http://localhost:3000")
+			.allowedMethods("*");
 	}
 }
