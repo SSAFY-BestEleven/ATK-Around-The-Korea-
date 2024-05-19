@@ -95,4 +95,9 @@ public class AccountServiceImpl implements AccountService {
 		jwtTokenRepository.deleteByUserId(userId);
 	}
 
+	@Override
+	public boolean isDuplicate(String username) {
+		return userRepository.existsByUsername(username);
+	}
+
 }
