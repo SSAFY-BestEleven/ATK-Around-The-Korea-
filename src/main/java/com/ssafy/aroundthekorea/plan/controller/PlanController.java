@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,11 +45,25 @@ public class PlanController {
 		// 새로운 list를 return
 		return ResponseEntity.status(HttpStatus.OK).body(request);
 	}
-	
+
+	// planId에 따른 TravelPlan 조회
 	@GetMapping("/{planId}/travel-plan")
 	public ResponseEntity<?> getTravelPlans(@PathVariable("planId") Integer planId) {
 		List<TravelPlan> travelPlans = planService.getTravelPlansByPlanId(planId);
 		return ResponseEntity.status(HttpStatus.OK).body(travelPlans);
 	}
 
+	// 특정 planId에 있는 TravelPlan 삭제
+	@DeleteMapping("/{planId}/{travelPlanId}")
+	public ResponseEntity<?> deleteTravelPlan(@PathVariable("planId") Integer planId, @PathVariable("travelPlanId") Integer travelPlanId){
+		planService.deleteByTravelPlanId(travelPlanId);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
+
+	// 특정 planId 삭제
+	@DeleteMapping("/{planId}")
+	public ResponseEntity<?> deletePlan(@PathVariable("planId") Integer planId){
+		planService.deleteByPlanId(planId);
+		return ResponseEntity.status(HttpStatus.OK).build();
+	}
 }
