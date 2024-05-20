@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.ssafy.aroundthekorea.exception.model.plan.DuplicateDataException;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlan;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlanOrderRequest;
 
@@ -19,5 +20,7 @@ public interface PlanService {
 	void deleteByTravelPlanId( Integer travelPlanId);
 
 	void deleteByPlanId(Integer planId);
+
+	void insertTravelPlan(Integer planId, Integer contentId) throws DuplicateDataException;
 
 }
