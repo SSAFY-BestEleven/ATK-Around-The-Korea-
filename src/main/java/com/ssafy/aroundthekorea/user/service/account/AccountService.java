@@ -7,4 +7,8 @@ import com.ssafy.aroundthekorea.user.controller.response.LoginResponseDto;
 
 public interface AccountService extends AuthenticationProvider {
 	LoginResponseDto createTokens(JwtAuthenticationDto authenticationDto);
+
+	void removeToken(Long userId);
+
+	boolean isDuplicate(String username);
 }

@@ -16,14 +16,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ssafy.aroundthekorea.security.jwt.JwtHandler;
 import com.ssafy.aroundthekorea.security.jwt.JwtTokenProperties;
+import com.ssafy.aroundthekorea.security.token.domain.JwtToken;
+import com.ssafy.aroundthekorea.security.token.repository.JwtTokenRepository;
 import com.ssafy.aroundthekorea.user.controller.request.LoginRequestDto;
 import com.ssafy.aroundthekorea.user.controller.request.SignUpUserRequestDto;
 import com.ssafy.aroundthekorea.user.controller.response.LoginResponseDto;
 import com.ssafy.aroundthekorea.user.domain.User;
 import com.ssafy.aroundthekorea.user.domain.repository.UserRepository;
 
+import io.restassured.http.Header;
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class UserIntegrationTest {
+public class AccountIntegrationTest {
 
 	@LocalServerPort
 	int port;
@@ -42,6 +46,9 @@ public class UserIntegrationTest {
 
 	@Autowired
 	JwtHandler jwtHandler;
+
+	@Autowired
+	JwtTokenRepository tokenRepository;
 
 	@DisplayName("회원가입에 성공한다.")
 	@Test
@@ -84,7 +91,45 @@ public class UserIntegrationTest {
 		JwtHandler.Claims verifiedRefreshClaim = jwtHandler.verify(refreshToken);
 		assertThat(verifiedAccessClaim.getUserId()).isEqualTo(requestLoginUser.getId());
 		assertThat(verifiedAccessClaim.getUsername()).isEqualTo(requestLoginUser.getUsername());
-		assertThat(verifiedAccessClaim.getRoles()).isEqualTo(new String[]{"ROLE_USER"});
+		assertThat(verifiedAccessClaim.getRoles()).isEqualTo(new String[] {"ROLE_USER"});
 		assertThat(verifiedRefreshClaim.getUserId()).isEqualTo(requestLoginUser.getId());
+	}
+
+	@DisplayName("인증되지 않는 사용자는 로그아웃을 할 수 없다")
+	@Test
+	void testLogoutByAuthenticationUser() {
+		//given
+		//when
+		//then
+		given().port(port).contentType(JSON).log().all().
+			when().delete("/api/v1/accounts/logout")
+			.then().log().all()
+			.statusCode(HttpStatus.SC_UNAUTHORIZED);
+	}
+
+	@DisplayName("인증된 사용자는 리프레시 토큰을 제거한다.")
+	@Test
+	void failLogoutByNotAuthenticationUser() {
+		//given
+		User savedUser = userRepository.save(User.builder()
+			.username("docker0102r")
+			.email("dock@gmai.com")
+			.password("{encrypt} password")
+			.build());
+
+		String accessToken = jwtHandler.createForAccess(
+			JwtHandler.Claims.of(savedUser.getId(), savedUser.getUsername(), new String[] {"ROLE_USER"}));
+		String refreshToken = jwtHandler.createForRefresh(JwtHandler.Claims.of(savedUser.getId()));
+		tokenRepository.save(new JwtToken(savedUser.getId(), refreshToken));
+		//when
+		//then
+		given().port(port)
+			.header(new Header(jwtTokenProperties.accessHeader(), accessToken))
+			.header(new Header(jwtTokenProperties.refreshHeader(), refreshToken))
+			.contentType(JSON)
+			.log().all().
+			when().delete("/api/v1/accounts/logout")
+			.then().log().all()
+			.statusCode(HttpStatus.SC_OK);
 	}
 }

@@ -45,11 +45,37 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 	@Override
 	public boolean preHandle(HttpServletRequest request,
-		HttpServletResponse response,
-		Object handler) throws Exception {
+		HttpServletResponse response, Object handler) {
 		String accessToken = request.getHeader(jwtConfig.accessHeader());
 		String refreshToken = request.getHeader(jwtConfig.refreshHeader());
 
+		validateHeader(accessToken, refreshToken);
+
+		JwtHandler.Claims verifiedClaim = null;
+		try {
+			verifiedClaim = jwtHandler.verify(accessToken);
+		} catch (TokenExpiredException e) {
+			log.info("access token expired! {} progress verify refresh...", e.getMessage());
+
+			User user = getValidUser(refreshToken);
+			JwtHandler.Claims newAccessClaim = JwtHandler.Claims.of(user.getId(),
+				user.getUsername(),
+				new String[] {"ROLE_USER"}
+			);
+
+			verifiedClaim = newAccessClaim;
+			String newAccessToken = jwtHandler.createForAccess(newAccessClaim);
+			addHeader(response, newAccessToken, refreshToken);
+		}
+
+		JwtAuthenticationDto jwtAuth = new JwtAuthenticationDto(verifiedClaim.getUserId(), verifiedClaim.getUsername());
+		JwtAuthenticationToken jwtAuthToken = new JwtAuthenticationToken(jwtAuth, null);
+		SecurityContextHolder.getContext().setAuthentication(jwtAuthToken);
+		addHeader(response, accessToken, refreshToken);
+		return true;
+	}
+
+	private void validateHeader(String accessToken, String refreshToken) {
 		boolean isExistHeader = accessToken != null && refreshToken != null;
 		if (!isExistHeader) {
 			throw new BadCredentialsException("token 정보가 올바르지 않습니다.");
@@ -59,21 +85,6 @@ public class AuthInterceptor implements HandlerInterceptor {
 		if (isBlankHeader) {
 			throw new BadCredentialsException("token 정보가 올바르지 않습니다.");
 		}
-
-		JwtHandler.Claims verifiedClaim = null;
-		try {
-			verifiedClaim = jwtHandler.verify(accessToken);
-		} catch (TokenExpiredException e) {
-			log.info("access token expired! {} progress verify refresh...", e.getMessage());
-			reIssueAccessToken(response, refreshToken);
-			return true;
-		}
-
-		JwtAuthenticationDto jwtAuth = new JwtAuthenticationDto(verifiedClaim.getUserId(), verifiedClaim.getUsername());
-		JwtAuthenticationToken jwtAuthToken = new JwtAuthenticationToken(jwtAuth, null);
-		SecurityContextHolder.getContext().setAuthentication(jwtAuthToken);
-		addHeader(response, accessToken, refreshToken);
-		return true;
 	}
 
 	@Override
@@ -84,24 +95,22 @@ public class AuthInterceptor implements HandlerInterceptor {
 		SecurityContextHolder.clearContext();
 	}
 
-	private void reIssueAccessToken(HttpServletResponse response, String refreshToken) {
-
+	private User getValidUser(String refreshToken) {
+		User user;
 		try {
 			TokenResponseDto jwtRefreshToken = verifyRefreshToken(refreshToken);
-			User user = userRepository.findById(jwtRefreshToken.userId())
+			user = userRepository.findById(jwtRefreshToken.userId())
 				.orElseThrow(() -> new NotFoundResource(
 					format("존재하지 않는 리소스입니다. [userid -> {0}]", jwtRefreshToken.userId()))
 				);
-			JwtHandler.Claims accessClaim = JwtHandler.Claims.of(user.getId(), user.getUsername(), new String[] {"ROLE_USER"});
-			String newAccessToken = jwtHandler.createForAccess(accessClaim);
-			addHeader(response, newAccessToken, refreshToken);
-		} catch (TokenExpiredException | NotFoundResource e) {
+		} catch (TokenExpiredException | NotFoundResource e1) {
 			tokenService.deleteExpiredToken();
 			throw new ReLoginException(
 				"refresh token이 만료되어 재인증이 필요합니다.",
 				"다시 로그인 해주세요."
 			);
 		}
+		return user;
 	}
 
 	private TokenResponseDto verifyRefreshToken(String refreshToken) {
