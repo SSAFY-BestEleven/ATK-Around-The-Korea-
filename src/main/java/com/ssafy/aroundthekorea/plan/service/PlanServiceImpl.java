@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.ssafy.aroundthekorea.exception.model.NotFoundResource;
 import com.ssafy.aroundthekorea.exception.model.plan.DuplicateDataException;
+import com.ssafy.aroundthekorea.map.repository.AttractionInfoRepository;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlan;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlanOrderRequest;
 import com.ssafy.aroundthekorea.plan.repository.PlanRepository;
@@ -23,7 +24,7 @@ import lombok.RequiredArgsConstructor;
 public class PlanServiceImpl implements PlanService {
 	private final TravelPlanRepository travelPlanRepository;
 	private final PlanRepository planRepository;
-
+	private final AttractionInfoRepository attractionInfoRepository;
 	@Override
 	public void addContentToPlan(Integer contentId, Integer planId) {
 		List<TravelPlan> travelPlanList = travelPlanRepository.findAllByPlanId(planId);
@@ -96,6 +97,7 @@ public class PlanServiceImpl implements PlanService {
 			newTravelPlan.setAttractionInfoId(contentId);
 			newTravelPlan.setPlanId(planId);
 			newTravelPlan.setOrderIndex(maxOrderIndex);
+			newTravelPlan.setAttractionInfoTitle(attractionInfoRepository.getReferenceById(contentId));
 			// 데이터 입력
 			travelPlanRepository.save(newTravelPlan);
 		}

@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.ssafy.aroundthekorea.exception.model.plan.DuplicateDataException;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlan;
 import com.ssafy.aroundthekorea.plan.domain.TravelPlanOrderRequest;
 import com.ssafy.aroundthekorea.plan.service.PlanService;
@@ -28,11 +29,26 @@ import lombok.RequiredArgsConstructor;
 public class PlanController {
 	private final PlanService planService;
 
-	// contentId를 선택한 planId에 맞게 계획 추가
-	@PostMapping("/{contentId}")
-	public ResponseEntity<?> getDetail(@PathVariable("contentId") Integer contentId,
-			@RequestParam("planId") Integer planId) {
-		planService.addContentToPlan(contentId, planId);
+	/*
+	 * // contentId를 선택한 planId에 맞게 계획 추가
+	 *
+	 * @PostMapping("/{contentId}") public ResponseEntity<?>
+	 * getDetail(@PathVariable("contentId") Integer contentId,
+	 *
+	 * @RequestParam("planId") Integer planId) {
+	 * planService.addContentToPlan(contentId, planId); return
+	 * ResponseEntity.status(HttpStatus.OK).build(); }
+	 */
+
+	// 현재 접속한 planId에 선택한 마커를 TravelPlan으로 추가
+	@PostMapping("/{planId}")
+	public ResponseEntity<?> addTravelPlan(@PathVariable("planId") Integer planId, @RequestParam("contentId") Integer contentId)
+	{
+		try {
+			planService.insertTravelPlan(planId,contentId);
+		} catch (DuplicateDataException e) {
+			e.printStackTrace();
+		}
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}
 
