@@ -17,7 +17,7 @@ public interface PlanService {
 
 	List<TravelPlan> getTravelPlansByPlanId(Integer planId);
 
-	void deleteByTravelPlanId( Integer travelPlanId);
+	void deleteByTravelPlanId( Integer planId, Integer travelPlanId);
 
 	void deleteByPlanId(Integer planId);
 

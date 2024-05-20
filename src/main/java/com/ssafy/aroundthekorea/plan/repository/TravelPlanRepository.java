@@ -20,5 +20,6 @@ public interface TravelPlanRepository extends JpaRepository<TravelPlan, Integer>
 	
 	@Query("SELECT COALESCE(MAX(tp.orderIndex), 0) FROM TravelPlan tp WHERE tp.planId = :planId")
 	Integer getMaxOrderIndex(@Param("planId") Integer planId);
-
+	
+	
 }

@@ -56,8 +56,8 @@ public class PlanController {
 	// 특정 planId에 있는 TravelPlan 삭제
 	@DeleteMapping("/{planId}/{travelPlanId}")
 	public ResponseEntity<?> deleteTravelPlan(@PathVariable("planId") Integer planId, @PathVariable("travelPlanId") Integer travelPlanId){
-		planService.deleteByTravelPlanId(travelPlanId);
-		return ResponseEntity.status(HttpStatus.OK).build();
+		planService.deleteByTravelPlanId(planId,travelPlanId);
+		return ResponseEntity.status(HttpStatus.OK).body(travelPlanId);
 	}
 
 	// 특정 planId 삭제
