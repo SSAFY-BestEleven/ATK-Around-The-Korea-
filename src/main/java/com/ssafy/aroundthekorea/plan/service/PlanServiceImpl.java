@@ -25,6 +25,7 @@ public class PlanServiceImpl implements PlanService {
 	private final TravelPlanRepository travelPlanRepository;
 	private final PlanRepository planRepository;
 	private final AttractionInfoRepository attractionInfoRepository;
+
 	@Override
 	public void addContentToPlan(Integer contentId, Integer planId) {
 		List<TravelPlan> travelPlanList = travelPlanRepository.findAllByPlanId(planId);
@@ -83,7 +84,8 @@ public class PlanServiceImpl implements PlanService {
 	}
 
 	@Override
-	public void insertTravelPlan(Integer planId, Integer contentId) throws DuplicateDataException {
+	public void insertTravelPlan(Integer planId, Integer contentId, String attractionInfoTitle,Double mapx, Double mapy)
+			throws DuplicateDataException {
 		// planId를 가져온다 -> planId에 contentId와 일치하는 데이터가 있을 경우 exception 발생 / 없을 경우 해당
 		// planId에 orderIndex를 해당 planId의 최대 orderIndex+1로 설정 후 TravelPlan 테이블에 저장
 		Optional<TravelPlan> travelPlan = travelPlanRepository.findByAttractionInfoIdAndPlanId(contentId, planId);
@@ -97,7 +99,9 @@ public class PlanServiceImpl implements PlanService {
 			newTravelPlan.setAttractionInfoId(contentId);
 			newTravelPlan.setPlanId(planId);
 			newTravelPlan.setOrderIndex(maxOrderIndex);
-			newTravelPlan.setAttractionInfoTitle(attractionInfoRepository.getReferenceById(contentId));
+			newTravelPlan.setAttractionInfoTitle(attractionInfoTitle);
+			newTravelPlan.setMapx(mapx);
+			newTravelPlan.setMapy(mapy);
 			// 데이터 입력
 			travelPlanRepository.save(newTravelPlan);
 		}

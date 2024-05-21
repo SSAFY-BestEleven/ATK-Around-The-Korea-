@@ -29,23 +29,15 @@ import lombok.RequiredArgsConstructor;
 public class PlanController {
 	private final PlanService planService;
 
-	/*
-	 * // contentId를 선택한 planId에 맞게 계획 추가
-	 *
-	 * @PostMapping("/{contentId}") public ResponseEntity<?>
-	 * getDetail(@PathVariable("contentId") Integer contentId,
-	 *
-	 * @RequestParam("planId") Integer planId) {
-	 * planService.addContentToPlan(contentId, planId); return
-	 * ResponseEntity.status(HttpStatus.OK).build(); }
-	 */
-
 	// 현재 접속한 planId에 선택한 마커를 TravelPlan으로 추가
 	@PostMapping("/{planId}")
-	public ResponseEntity<?> addTravelPlan(@PathVariable("planId") Integer planId, @RequestParam("contentId") Integer contentId)
-	{
+	public ResponseEntity<?> addTravelPlan(@PathVariable("planId") Integer planId,
+			@RequestParam("contentId") Integer contentId,
+			@RequestParam("attractionInfoTitle") String attractionInfoTitle,
+			@RequestParam("mapx") Double mapx,
+			@RequestParam("mapy") Double mapy) {
 		try {
-			planService.insertTravelPlan(planId,contentId);
+			planService.insertTravelPlan(planId, contentId, attractionInfoTitle,mapx,mapy);
 		} catch (DuplicateDataException e) {
 			e.printStackTrace();
 		}
@@ -71,14 +63,15 @@ public class PlanController {
 
 	// 특정 planId에 있는 TravelPlan 삭제
 	@DeleteMapping("/{planId}/{travelPlanId}")
-	public ResponseEntity<?> deleteTravelPlan(@PathVariable("planId") Integer planId, @PathVariable("travelPlanId") Integer travelPlanId){
-		planService.deleteByTravelPlanId(planId,travelPlanId);
+	public ResponseEntity<?> deleteTravelPlan(@PathVariable("planId") Integer planId,
+			@PathVariable("travelPlanId") Integer travelPlanId) {
+		planService.deleteByTravelPlanId(planId, travelPlanId);
 		return ResponseEntity.status(HttpStatus.OK).body(travelPlanId);
 	}
 
 	// 특정 planId 삭제
 	@DeleteMapping("/{planId}")
-	public ResponseEntity<?> deletePlan(@PathVariable("planId") Integer planId){
+	public ResponseEntity<?> deletePlan(@PathVariable("planId") Integer planId) {
 		planService.deleteByPlanId(planId);
 		return ResponseEntity.status(HttpStatus.OK).build();
 	}

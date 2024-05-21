@@ -21,6 +21,6 @@ public interface PlanService {
 
 	void deleteByPlanId(Integer planId);
 
-	void insertTravelPlan(Integer planId, Integer contentId) throws DuplicateDataException;
+	void insertTravelPlan(Integer planId, Integer contentId,String attractionInfoTitle, Double mapx, Double mapy) throws DuplicateDataException;
 
 }
