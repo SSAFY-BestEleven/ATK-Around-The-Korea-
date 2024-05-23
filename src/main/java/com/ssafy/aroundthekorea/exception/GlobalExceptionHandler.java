@@ -33,7 +33,7 @@ public class GlobalExceptionHandler {
 			.body("입력 오류가 발생했습니다.");
 	}
 
-	@ExceptionHandler({JWTVerificationException.class})
+	@ExceptionHandler({ JWTVerificationException.class })
 	public ResponseEntity<?> handle(JWTVerificationException e) {
 		log.info(e.getMessage());
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED)

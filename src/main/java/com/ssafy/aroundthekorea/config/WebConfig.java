@@ -20,7 +20,12 @@ public class WebConfig implements WebMvcConfigurer {
 
 	@Override
 	public void addInterceptors(InterceptorRegistry registry) {
-		registry.addInterceptor(proxyInterceptor());
+		registry.addInterceptor(proxyInterceptor())
+		.excludePathPatterns("/api/v1/accounts/**")
+		.excludePathPatterns("/swagger-ui.html")
+		.excludePathPatterns("/v3/api-docs/**")
+		.excludePathPatterns("/swagger-ui/**")
+		.excludePathPatterns("/**");
 	}
 
 	public HandlerInterceptor proxyInterceptor() {

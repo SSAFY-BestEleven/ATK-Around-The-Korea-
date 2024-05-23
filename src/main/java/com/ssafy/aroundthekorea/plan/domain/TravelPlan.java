@@ -19,6 +19,9 @@ public class TravelPlan {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	private Integer attractionInfoId;
+	private String attractionInfoTitle;
 	private Integer planId;
 	private Integer orderIndex; // order 1 이면 출발 가장 끝 값은 도착, 프론트에서 수정 후 반환
+	private Double mapx;
+	private Double mapy;
 }

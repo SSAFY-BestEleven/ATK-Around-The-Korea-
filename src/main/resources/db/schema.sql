@@ -54,3 +54,9 @@ create table users
     username varchar(255),
     primary key (id)
 );
+
+insert into travel_plan(attraction_info_id,order_index,plan_id,attraction_info_title) values (1,1,1,'a');
+
+insert into travel_plan(attraction_info_id,order_index,plan_id,attraction_info_title) values (2,2,1,'b');
+
+insert into travel_plan(attraction_info_id,order_index,plan_id,attraction_info_title) values (3,3,1,'c');

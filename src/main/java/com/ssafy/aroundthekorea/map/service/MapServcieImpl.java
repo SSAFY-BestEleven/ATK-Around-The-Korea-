@@ -16,9 +16,9 @@ public class MapServcieImpl implements MapService {
 	private final AttractionInfoRepository attractionInfoRepository;
 
 	@Override
-	public List<AttractionInfo> getKeywordAttraction(String keyword, Long sido, Long gugun, Long contentTypeId) {
+	public List<AttractionInfo> getKeywordAttraction(String keyword, Long sido, Long contentTypeId) {
 		try {
-			return attractionInfoRepository.findAllByKeyword(keyword, sido, gugun, contentTypeId);
+			return attractionInfoRepository.findAllByKeyword(keyword, sido, contentTypeId);
 		} catch (Exception e) {
 			throw new EntityNotFoundException("해당하는 키워드가 없습니다.");
 		}

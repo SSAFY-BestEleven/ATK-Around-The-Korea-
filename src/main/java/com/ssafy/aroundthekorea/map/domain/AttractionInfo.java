@@ -16,7 +16,7 @@ import lombok.NoArgsConstructor;
 public class AttractionInfo {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long contentId;
+	private Integer contentId;
 	private Long contentTypeId;
 	private String title;
 	private String addr1;
@@ -33,7 +33,7 @@ public class AttractionInfo {
 	private String mlevel;
 
 	@Builder
-	public AttractionInfo(Long contentId, Long contentTypeId, String title, String addr1, String addr2, String zipcode,
+	public AttractionInfo(Integer contentId, Long contentTypeId, String title, String addr1, String addr2, String zipcode,
 			String tel, String firstImage, String firstImage2, Long readCount, Long sidoCode, Long gugunCode,
 			Double latitude, Double longitude, String mlevel) {
 		super();
